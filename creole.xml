@@ -1,0 +1,13 @@
+<!-- creole.xml DBpedia Spotlight -->
+<!--  jenda, 23/1/2013 -->
+<!-- $Id: creole.xml 9992 2008-10-31 16:53:29Z ian_roberts $ -->
+
+<!--
+This file just references the JAR file that contains the compiled resource.
+Configuration is contained in the @CreoleResource annotation on 
+gate.DBpediaSpotlight.DBpediaSpotlight.
+-->
+
+<CREOLE-DIRECTORY>
+  <JAR SCAN="true">DBpedia Spotlight.jar</JAR>
+</CREOLE-DIRECTORY>
