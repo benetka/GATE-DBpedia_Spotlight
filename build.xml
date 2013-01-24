@@ -29,7 +29,7 @@
   ========================================================-->
 
   <!-- Name of the plugin -->
-  <property name="plugin.name" value="DBpedia Spotlight"/>
+  <property name="plugin.name" value="DBpediaSpotlight"/>
 
   <!-- Make environment variables available -->
   <property environment="env" />

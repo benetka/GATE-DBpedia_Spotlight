@@ -9,5 +9,16 @@ gate.DBpediaSpotlight.DBpediaSpotlight.
 -->
 
 <CREOLE-DIRECTORY>
-  <JAR SCAN="true">DBpedia Spotlight.jar</JAR>
+    <RESOURCE>
+      <JAR>DBpediaSpotlight.jar</JAR>
+      <NAME>DBpedia Spotlight</NAME>
+      <CLASS>gate.DBpedia.Spotlight.DBpediaSpotlightTagger</CLASS>
+      <COMMENT>DBpedia Spotlight Entity Recognizer</COMMENT>
+      <HELPURL>https://github.com/jendarybak/GATE-DBpedia_Spotlight</HELPURL>      
+      <PARAMETER NAME="document" RUNTIME="true" COMMENT="document to process">gate.Document</PARAMETER>
+      <PARAMETER NAME="outputASName" RUNTIME="true" OPTIONAL="true" COMMENT="Annotationset to put annotations into">java.lang.String</PARAMETER>
+      <PARAMETER NAME="dbpediaUrlString" RUNTIME="false" OPTIONAL="false" COMMENT="Address of DBpedia web service">java.lang.String</PARAMETER>
+      <PARAMETER NAME="confidenceString" RUNTIME="false" OPTIONAL="true" COMMENT="DBpedia disambiguation parametr - confidence">java.lang.String</PARAMETER>
+      <PARAMETER NAME="supportString" RUNTIME="false" OPTIONAL="true" COMMENT="DBpedia disambiguation parametr - support">java.lang.String</PARAMETER>
+    </RESOURCE>  
 </CREOLE-DIRECTORY>
