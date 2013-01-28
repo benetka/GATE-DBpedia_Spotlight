@@ -1,32 +1,16 @@
 /*
- *  DBpediaSpotlight.java
+ * DBpediaSpotlightTagger	.java
  *
+ * Jan Rybak, 23/1/2013
  *
- * Copyright (c) 2000-2001, The University of Sheffield.
+ * Part of DBpedia Spotlight tagger, plugin for GATE.
  *
- * This file is part of GATE (see http://gate.ac.uk/), and is free
- * software, licenced under the GNU Library General Public License,
- * Version 2, June1991.
- *
- * A copy of this licence is included in the distribution in the file
- * licence.html, and is also available at http://gate.ac.uk/gate/licence.html.
- *
- *  jenda, 23/1/2013
- *
- *  $Id: DBpediaSpotlight.jav 9992 2008-10-31 16:53:29Z ian_roberts $
- *
- * For details on the configuration options, see the user guide:
- * http://gate.ac.uk/cgi-bin/userguide/sec:creole-model:config
  */
+
 
 package gate.DBpedia.Spotlight;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.*;
-import java.util.ArrayList;
 
 import gate.*;
 import gate.creole.*;
@@ -44,28 +28,39 @@ import gate.util.*;
  * 
  *  @version 0.1  
  *  @author jendarybak@gmail.com
- *  @see http://github.com/jendarybak/GATE-DBpedia_Spotlight
+ *  @link http://github.com/jendarybak/GATE-DBpedia_Spotlight
  */
 @CreoleResource(name = "DBpedia Spotlight", comment = "DBpedia Spotlight Entity Recognizer")
 public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
   implements ProcessingResource {
+
+  
+  /**
+   * First version of this plugin
+   */
+  private static final long serialVersionUID = 1L;
+
+
+  /** Code  */
+  private static final String OUTPUT_LABEL = "Spotlight";
+  
+  /** Default value  */
+  private static final int DEFAULT_VALUE = -1;
+	
 
   /** The name of the annotation set used for input */
   protected String outputASName;  
 
   /** Address of DBpedia web service */
   protected String dbpediaUrlString;
-  
-  /** URL address of DBpedia web service */
-  protected URL dbpediaUrl;
 
   /** Disambiguation parametr - confidence */
   protected String confidenceString;
   protected double confidence;
 
-  /** Disambiguation parametr - support */
+  /** Disambiguation parametr - integer that means the number of Wikipedia inlinks */
   protected String supportString;
-  protected double support;
+  protected int support;
 
 
   /**
@@ -81,7 +76,7 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
       throw new ResourceInstantiationException("DBpedia Spotlight URL is missing!");
     }
     
-    // init dbpedia url and try if it can be connected
+    // test format of DS url
     try {
       dbpediaUrlString = dbpediaUrlString.trim();
       
@@ -89,26 +84,35 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
     	  dbpediaUrlString += "/";
       }
       
-      dbpediaUrl = new URL(dbpediaUrlString);
-    }
-    catch(MalformedURLException e) {
+      new URL(dbpediaUrlString);
+      
+    } catch(MalformedURLException e) {
       throw new ResourceInstantiationException("Wrong URL format.");
     }
     
     // init confidence parameter
-    try {
-      confidence = Double.parseDouble(confidenceString);
-    }
-    catch(NumberFormatException e) {
-      throw new ResourceInstantiationException("Confidence parameter must be a number (double).");
+    
+    if (confidenceString.trim().length() > 0) {
+	    try {
+	      confidence = Double.parseDouble(confidenceString);
+	    }
+	    catch(NumberFormatException e) {
+	      throw new ResourceInstantiationException("Confidence parameter must be a number (double).");
+	    }
+    } else {
+    	confidence = DEFAULT_VALUE;
     }
 
     // init support parameter
-    try {
-      support = Double.parseDouble(supportString);
-    }
-    catch(NumberFormatException e) {
-      throw new ResourceInstantiationException("Support parameter must be a number (double).");
+    if (confidenceString.trim().length() > 0) {
+	    try {
+	      support = Integer.parseInt(supportString);
+	    }
+	    catch(NumberFormatException e) {
+	      throw new ResourceInstantiationException("Support parameter must be a number (integer).");
+	    }
+    } else {
+    	support = DEFAULT_VALUE;
     }
     
     return this;
@@ -133,36 +137,39 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
 
     // get the annotationSet name provided by the user, or otherwise use
     // the default method
-    AnnotationSet outputAs = (outputASName == null || outputASName.trim()
-            .length() == 0) ? document.getAnnotations() : document
-            .getAnnotations(outputASName);
+    AnnotationSet outputAs = (outputASName == null || outputASName.length() == 0) 
+    		? document.getAnnotations() : document.getAnnotations(outputASName);
 
     try {
       // document in plain text
-      String docText = document.getContent().toString();
+      String documentText = document.getContent().toString();
       
-      // TODO: just testing
-      // load response from DBpedia Spotlight server 
-      String DBpediaSpotlightResponse = receiveEntities(docText);
+      // connect to DBpedia Spotlight server and send a query 
+      IDsRequest request = new DsPOSTRequest(dbpediaUrlString);
+      String XMLResponse = request.query(documentText, confidence, support);
+
+      // parse DBpedia Spotlight answer
+      DigestDsResources d = new DigestDsResources(XMLResponse);
       
-      //TODO: load entities (remote request)
-      
-      //testing
-      ArrayList<DBpediaSpotlightEntity> entityList = new ArrayList<DBpediaSpotlightEntity>();
-      DBpediaSpotlightEntity entity = new DBpediaSpotlightEntity(
-    		  "http://dbpedia.org/resource/Michelle_Obama",
-    		  321, 
-    		  "Michelle Obama", 
-    		  10, 
-    		  0.1565164476633072, 
-    		  -1.0);
-      entityList.add(entity);
-      //\end of testing
-      
-      for(DBpediaSpotlightEntity ent : entityList) {
+      // load content of XML into DsAnnotation object
+      DsAnnotation docAnnotation = d.digest();
+
+      // iterate over all 'Resource' entities given by DBpedia Spotlight
+      // and annotate current document
+      for(DsResource r : docAnnotation.getResources()) {
           FeatureMap fm = gate.Factory.newFeatureMap();
-          outputAs.add(new Long(ent.getStart()), new Long(ent.getEnd()), "NER", fm); // TODO: set customised name of output
-        }
+          
+          // specify features
+          fm.put("URI", r.getURI());
+          fm.put("Support", r.getSupport());
+          fm.put("Types", r.getTypes());
+          fm.put("SurfaceForm", r.getSurfaceForm());
+          fm.put("SimilarityScore", r.getSimilarityScore());
+          fm.put("PercentageOfSecondRank", r.getPercentageOfSecondRank());
+          
+          // add feature
+          outputAs.add(r.start(), r.end(), OUTPUT_LABEL, fm);
+      }
       
     } catch(InvalidOffsetException e) {
       throw new ExecutionException(e);
@@ -172,81 +179,6 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
     fireProcessFinished();
   }  
   
-  
-  /**
-   * Sends request (plain text) to DBpedia Spotlight endpoint and  
-   * receives response with annotated text.<BR>
-   * 
-   * @param	documentText	plain text document	
-   * @return 				annotated text in XML format
-   */  
-  private String receiveEntities(String documentText) {
-  	
-	// settings
-	HttpURLConnection connection = null;
-  	final String charset = "UTF-8";
-  	final String method = "POST";
-  	final String contentType = "application/x-www-form-urlencoded";
-  	final String accept = "text/xml";
-  	final String language = "en-US";
-		
-	try {
-	    //Create connection
-		String urlParameters =
-		        "text=" + URLEncoder.encode(documentText, charset) +
-		        "&confidence=" + URLEncoder.encode(Double.toString(confidence), charset) +
-		        "&support=" + URLEncoder.encode(Double.toString(support), charset) +
-		        "&disambiguator=" + URLEncoder.encode("Document", charset);
-		
-	    connection = (HttpURLConnection) dbpediaUrl.openConnection();
-	    connection.setRequestMethod(method);
-	    connection.setRequestProperty("Content-Type", contentType);
-	    connection.setRequestProperty("Accept", accept);
-	    //connection.setReadTimeout(10000);
-	    //connection.setConnectTimeout(15000);
-				
-	    connection.setRequestProperty("Content-Length", "" + 
-	               Integer.toString(urlParameters.getBytes().length));
-	    connection.setRequestProperty("Content-Language", language);  
-				
-	    connection.setUseCaches (false);
-	    connection.setDoInput(true);
-	    connection.setDoOutput(true);
-
-	    //Send request
-	    DataOutputStream wr = new DataOutputStream (
-	                  connection.getOutputStream ());
-	    wr.writeBytes (urlParameters);
-	    wr.flush ();
-	    wr.close ();
-	    
-
-	    //Get Response	
-	    InputStream is = connection.getInputStream();
-	    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-	    String line;
-	    StringBuffer response = new StringBuffer(); 
-	    
-	    while((line = rd.readLine()) != null) {
-	    	response.append(line);
-	    	response.append('\r');
-	    }
-	    
-	    rd.close();
-	    
-	    // return response
-	    return response.toString();
-
-	} catch (Exception e) {
-		e.printStackTrace();
-		throw new GateRuntimeException("Error during communication with DBpedia Spotlight server!");
-
-	} finally {
-		if (connection != null) {
-			connection.disconnect(); 
-	    }
-	}
-  }
   
   /** 
    * Getters and setters
@@ -292,7 +224,7 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
    * @param annotationSetName
    */
   public void setOutputASName(String outputAS) {
-    this.outputASName = outputAS;
+    this.outputASName = outputAS.trim();
   }  
   
 } // class DBpediaSpotlight

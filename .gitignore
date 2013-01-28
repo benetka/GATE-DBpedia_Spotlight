@@ -5,3 +5,4 @@ doc/
 .*
 *.jar
 *.zip
+!lib/*
