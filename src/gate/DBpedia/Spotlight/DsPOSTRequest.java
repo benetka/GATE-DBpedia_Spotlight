@@ -89,7 +89,7 @@ public class DsPOSTRequest implements IDsRequest {
 	 *  @return	string			Annotated text.
 	 */
     public String query(String documentText, double confidence, int support,
-    		String types, String sparql, String policy, String coreferenceResolution, 
+    		String types, String sparql, String policy, Boolean coreferenceResolution, 
     		String disambiguator) {
 	  	
 		HttpURLConnection connection = null;
@@ -108,7 +108,7 @@ public class DsPOSTRequest implements IDsRequest {
 				urlParameters += "&sparql=" + URLEncoder.encode(sparql, CHARSET);}
 			if (coreferenceResolution != null) { 
 				urlParameters += "&coreferenceResolution=" 
-									+ URLEncoder.encode(coreferenceResolution, CHARSET);}
+									+ URLEncoder.encode(coreferenceResolution.toString(), CHARSET);}
 			if (sparql != null) { 
 				urlParameters += "&disambiguator=" + URLEncoder.encode(disambiguator, CHARSET);}
 			        

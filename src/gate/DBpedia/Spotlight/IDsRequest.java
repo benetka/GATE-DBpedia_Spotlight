@@ -25,7 +25,14 @@ public interface IDsRequest {
 	 *  
 	 *  @return	string			Annotated text.
 	 */
-	public String query(String documentText, double confidence, int support,
-    		String types, String sparql, String policy, String coreferenceResolution, 
+	public String query(
+			String documentText, 
+			double confidence, 
+			int support,
+    		String types, 
+    		String sparql, 
+    		String policy, 
+    		Boolean coreferenceResolution, 
     		String disambiguator);
+	
 }

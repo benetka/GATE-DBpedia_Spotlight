@@ -72,7 +72,7 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
   protected String policy;
   
   /** Coreference resolution */
-  protected String coreferenceResolution;
+  protected Boolean coreferenceResolution;
   
   /** Disambiguator */
   protected String disambiguator;
@@ -242,7 +242,7 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
    * Sets the AnnonationSet name, that is used to create the
    * AnnotationSet
    * 
-   * @param annotationSetName
+   * @param outputAS
    */
   public void setOutputASName(String outputAS) {
     this.outputASName = outputAS.trim();
@@ -280,13 +280,13 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
     this.policy = policy;
   }
 	
-  public String getCoreferenceResolution() {
-    return coreferenceResolution;
+  public Boolean getCoreferenceResolution() {
+	  return this.coreferenceResolution;
   }
-	
-  public void setCoreferenceResolution(String coreferenceResolution) {
-    this.coreferenceResolution = coreferenceResolution;
-  }
+  
+  public void setCoreferenceResolution(Boolean coreferenceResolution) {
+	  this.coreferenceResolution = coreferenceResolution;
+  }  
 	
   public String getDisambiguator() {
     return disambiguator;

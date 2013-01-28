@@ -47,7 +47,6 @@ public class DsGETRequest implements IDsRequest {
 
     /**
 	 * Constructor method.
-     * @return 
 	 */
     public DsGETRequest(String dbpediaUrl) {
     	this.dbpediaUrl = dbpediaUrl;
@@ -70,7 +69,7 @@ public class DsGETRequest implements IDsRequest {
 	 *  @return	string			Annotated text.
 	 */
     public String query(String documentText, double confidence, int support,
-    		String types, String sparql, String policy, String coreferenceResolution, 
+    		String types, String sparql, String policy, Boolean coreferenceResolution, 
     		String disambiguator) {
 	  	
 		// settings
@@ -96,7 +95,7 @@ public class DsGETRequest implements IDsRequest {
 				url += "&sparql=" + URLEncoder.encode(sparql, CHARSET);}
 			if (coreferenceResolution != null) { 
 				url += "&coreferenceResolution=" 
-									+ URLEncoder.encode(coreferenceResolution, CHARSET);}
+									+ URLEncoder.encode(coreferenceResolution.toString(), CHARSET);}
 			if (sparql != null) { 
 				url += "&disambiguator=" + URLEncoder.encode(disambiguator, CHARSET);}
 			
