@@ -30,7 +30,7 @@ import gate.util.*;
  *  @author jendarybak@gmail.com
  *  @link http://github.com/jendarybak/GATE-DBpedia_Spotlight
  */
-@CreoleResource(name = "DBpedia Spotlight", comment = "DBpedia Spotlight Entity Recognizer")
+@CreoleResource(name = "DBpedia Spotlight", comment = "DBpedia Spotlight Entity Tagger")
 public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
   implements ProcessingResource {
 
@@ -40,7 +40,6 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
    */
   private static final long serialVersionUID = 1L;
 
-
   /** Code  */
   private static final String OUTPUT_LABEL = "Spotlight";
   
@@ -48,6 +47,7 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
   private static final int DEFAULT_VALUE = -1;
 	
 
+  
   /** The name of the annotation set used for input */
   protected String outputASName;  
 
@@ -163,7 +163,12 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
       IDsRequest request = new DsPOSTRequest(dbpediaUrlString);
       String XMLResponse = request.query(documentText, confidence, support,
     		  types, sparql, policy, coreferenceResolution, disambiguator);
-
+      
+      if (XMLResponse == null) {
+    	  fireProcessFinished();
+    	  throw new GateRuntimeException("No result returned from DBpedia Spotlight!");
+      }
+      
       // parse DBpedia Spotlight answer
       DigestDsResources d = new DigestDsResources(XMLResponse);
       
@@ -243,65 +248,52 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
     this.outputASName = outputAS.trim();
   }
 
-
   public double getConfidence() {
 	  return confidence;
   }
-	
 	
   public void setConfidence(double confidence) {
 	this.confidence = confidence;
   }
 	
+  public String getTypes() {
+    return types;
+  }
 	
-	public String getTypes() {
-		return types;
-	}
+  public void setTypes(String types) {
+    this.types = types;
+  }
 	
+  public String getSparql() {
+    return sparql;
+  }
 	
-	public void setTypes(String types) {
-		this.types = types;
-	}
+  public void setSparql(String sparql) {
+    this.sparql = sparql;
+  }
 	
+  public String getPolicy() {
+    return policy;
+  }
 	
-	public String getSparql() {
-		return sparql;
-	}
+  public void setPolicy(String policy) {
+    this.policy = policy;
+  }
 	
+  public String getCoreferenceResolution() {
+    return coreferenceResolution;
+  }
 	
-	public void setSparql(String sparql) {
-		this.sparql = sparql;
-	}
+  public void setCoreferenceResolution(String coreferenceResolution) {
+    this.coreferenceResolution = coreferenceResolution;
+  }
 	
+  public String getDisambiguator() {
+    return disambiguator;
+  }
 	
-	public String getPolicy() {
-		return policy;
-	}
-	
-	
-	public void setPolicy(String policy) {
-		this.policy = policy;
-	}
-	
-	
-	public String getCoreferenceResolution() {
-		return coreferenceResolution;
-	}
-	
-	
-	public void setCoreferenceResolution(String coreferenceResolution) {
-		this.coreferenceResolution = coreferenceResolution;
-	}
-	
-	public String getDisambiguator() {
-		return disambiguator;
-	}
-	
-	
-	public void setDisambiguator(String disambiguator) {
-		this.disambiguator = disambiguator;
-	}  
-  
-  
-  
+  public void setDisambiguator(String disambiguator) {
+    this.disambiguator = disambiguator;
+  }  
+    
 } // class DBpediaSpotlight

@@ -9,7 +9,6 @@
 
 package gate.DBpedia.Spotlight;
 
-import gate.creole.ResourceInstantiationException;
 import gate.util.GateRuntimeException;
 
 import java.io.BufferedReader;
@@ -31,7 +30,7 @@ public class DsGETRequest implements IDsRequest {
     /**
      * Primarily we parse XML documents.<br /> 
      * 
-     * Other possible formats:
+     * Other possible formats (but not in this plugin yet):
      * <ul>
      * <li>text/html</li>
      * <li>application/xhtml+xml</li>
@@ -104,8 +103,9 @@ public class DsGETRequest implements IDsRequest {
 	
 			try {
 				requestURL = new URL(url);
+				
 			} catch(MalformedURLException e) {
-				throw new ResourceInstantiationException("Wrong URL format.");
+				throw new GateRuntimeException("Wrong URL format.\n");
 			}
 			
 			/*

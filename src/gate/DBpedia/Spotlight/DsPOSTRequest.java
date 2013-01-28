@@ -37,7 +37,7 @@ public class DsPOSTRequest implements IDsRequest {
     /**
      * Primarily we parse XML documents.<br /> 
      * 
-     * Other possible formats:
+     * Other possible formats (but not in this plugin yet):
      * <ul>
      * <li>text/html</li>
      * <li>application/xhtml+xml</li>
@@ -111,8 +111,6 @@ public class DsPOSTRequest implements IDsRequest {
 									+ URLEncoder.encode(coreferenceResolution, CHARSET);}
 			if (sparql != null) { 
 				urlParameters += "&disambiguator=" + URLEncoder.encode(disambiguator, CHARSET);}
-			
-			System.out.println("URL: \n"+ urlParameters);
 			        
 	
 	    	connection = (HttpURLConnection) dbpediaUrl.openConnection();
