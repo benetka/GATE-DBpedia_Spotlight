@@ -21,5 +21,11 @@ gate.DBpediaSpotlight.DBpediaSpotlight.
       <PARAMETER NAME="dbpediaUrlString" RUNTIME="false" OPTIONAL="false" COMMENT="Address of DBpedia web service">java.lang.String</PARAMETER>
       <PARAMETER NAME="confidenceString" RUNTIME="true" OPTIONAL="true" COMMENT="DBpedia disambiguation parametr (double)" DEFAULT="0.2">java.lang.String</PARAMETER>
       <PARAMETER NAME="supportString" RUNTIME="true" OPTIONAL="true" COMMENT="DBpedia disambiguation parametr (integer)" DEFAULT="20">java.lang.String</PARAMETER>
+      <PARAMETER NAME="types" RUNTIME="true" OPTIONAL="true" COMMENT="Specify RDF types such as DBpedia:Company. Use comma to separate multiple types.">java.lang.String</PARAMETER>
+      <PARAMETER NAME="sparql" RUNTIME="true" OPTIONAL="true" COMMENT="SPARQL query to filter results.">java.lang.String</PARAMETER>
+      <PARAMETER NAME="policy" RUNTIME="true" OPTIONAL="true" COMMENT="Possible values: blacklist/whitelist">java.lang.String</PARAMETER>
+      <PARAMETER NAME="coreferenceResolution" RUNTIME="true" OPTIONAL="true" COMMENT="Coreference resolution - true or false.">java.lang.Boolean</PARAMETER>
+      <PARAMETER NAME="disambiguator" RUNTIME="true" OPTIONAL="true" COMMENT="Disambiguator" DEFAULT="Document">java.lang.String</PARAMETER>
+
     </RESOURCE>  
 </CREOLE-DIRECTORY>
