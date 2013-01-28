@@ -49,34 +49,32 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
 
   
   /** The name of the annotation set used for input */
-  protected String outputASName;  
+  private String outputASName;  
 
   /** Address of DBpedia web service */
-  protected String dbpediaUrlString;
+  private String dbpediaUrlString;
 
   /** Disambiguation parametr - confidence */
-  protected String confidenceString;
-  protected double confidence;
+  private double confidence;
 
   /** Disambiguation parametr - integer that means the number of Wikipedia inlinks */
-  protected String supportString;
-  protected int support;
+  private int support;
 
   /** Specification of RDF types such as DBpedia:Company. */
-  protected String types;
+  private String types;
 
   /** SPARQL query to filter results */
-  protected String sparql;
+  private String sparql;
   
   /** The policy can be to 'blacklist' or 'whitelist' */
-  protected String policy;
+  private String policy;
   
   /** Coreference resolution */
-  protected Boolean coreferenceResolution;
+  private Boolean coreferenceResolution;
   
   /** Disambiguator */
-  protected String disambiguator;
- 
+  private String disambiguator;
+
 
   /**
    * Initializes this resource
@@ -105,31 +103,6 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
       throw new ResourceInstantiationException("Wrong URL format.");
     }
     
-    // init confidence parameter
-    
-    if (confidenceString.trim().length() > 0) {
-	    try {
-	      confidence = Double.parseDouble(confidenceString);
-	    }
-	    catch(NumberFormatException e) {
-	      throw new ResourceInstantiationException("Confidence parameter must be a number (double).");
-	    }
-    } else {
-    	confidence = DEFAULT_VALUE;
-    }
-
-    // init support parameter
-    if (confidenceString.trim().length() > 0) {
-	    try {
-	      support = Integer.parseInt(supportString);
-	    }
-	    catch(NumberFormatException e) {
-	      throw new ResourceInstantiationException("Support parameter must be a number (integer).");
-	    }
-    } else {
-    	support = DEFAULT_VALUE;
-    }
-    
     return this;
   }
   
@@ -149,11 +122,6 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
       fireProcessFinished();
       throw new GateRuntimeException("No document to process!");
     }
-
-    // get the annotationSet name provided by the user, or otherwise use
-    // the default method
-    AnnotationSet outputAs = (outputASName == null || outputASName.length() == 0) 
-    		? document.getAnnotations() : document.getAnnotations(outputASName);
 
     try {
       // document in plain text
@@ -175,6 +143,10 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
       // load content of XML into DsAnnotation object
       DsAnnotation docAnnotation = d.digest();
 
+      // get the annotationSet name provided by the user, or otherwise use
+      //the default method
+      AnnotationSet outputAs = (outputASName == null || outputASName.length() == 0) 
+  	    		? document.getAnnotations() : document.getAnnotations(outputASName);
       // iterate over all 'Resource' entities given by DBpedia Spotlight
       // and annotate current document
       for(DsResource r : docAnnotation.getResources()) {
@@ -214,22 +186,6 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
     this.dbpediaUrlString = dbpediaUrlString;
   }
   
-  public String getConfidenceString() {
-    return confidenceString;
-  }
-
-  public void setConfidenceString(String confidenceString) {
-    this.confidenceString = confidenceString;
-  }
-  
-  public String getSupportString() {
-    return supportString;
-  }
-
-  public void setSupportString(String supportString) {
-    this.supportString = supportString;
-  }
-  
   /**
    * Returns the name of the AnnotationSet that has been provided to
    * create the AnnotationSet
@@ -244,18 +200,28 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
    * 
    * @param outputAS
    */
-  public void setOutputASName(String outputAS) {
-    this.outputASName = outputAS.trim();
+  public void setOutputASName(String outputASName) {
+    if (outputASName != null && outputASName.length() > 0) {
+    	this.outputASName = outputASName;
+    }
   }
 
-  public double getConfidence() {
+  public Double getConfidence() {
 	  return confidence;
   }
 	
-  public void setConfidence(double confidence) {
+  public void setConfidence(Double confidence) {
 	this.confidence = confidence;
   }
 	
+  public Integer getSupport() {
+	return support;
+  }
+
+  public void setSupport(Integer support) {
+	this.support = support;
+  }
+  
   public String getTypes() {
     return types;
   }
@@ -294,6 +260,6 @@ public class DBpediaSpotlightTagger extends AbstractLanguageAnalyser
 	
   public void setDisambiguator(String disambiguator) {
     this.disambiguator = disambiguator;
-  }  
+  }
     
 } // class DBpediaSpotlight
