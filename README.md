@@ -27,34 +27,33 @@ ant
 ## Parameters
 
 *   __confidence__
-
-    * Format: Double <0-1>
+    * Format: Double (0-1)
     * Disambiguation parameter. Combines factors of topic relevance and context ambiguity. It’s value is ranging from 0 to 1 and higher threshold results in omitting incorrect annotations at the risk of loosing some correct annotations.
+    
 *   __coreferenceResolution__
-
     * Format: Boolean
     * Should be coreference resolution applied?
+    
 *   __disambiguator__
-
     * Format: String (Document | Occurrences)
+    
 *   __outputASName__
-
     * Format: String
     * Name of the annotation set used for the output
+    
 *   __policy__
-
     * Format: String (blacklist | whitelist)
     * Policy for given parameters.
+    
 *   __sparql__
-
     * Format: String
     * [SPARQL](http://www.w3.org/TR/sparql11-query/) query to filter results ([example](https://github.com/dbpedia-spotlight/dbpedia-spotlight/wiki/Web-service)).
+    
 *   __support__
-
     * Format: Integer
-    * Minimal number of Wikipedia backlinks.    
+    * Minimal number of Wikipedia backlinks.
+        
 *   __types__
-
     * Format: String
     * Specification of RDF types such as DBpedia:Company.            
 
